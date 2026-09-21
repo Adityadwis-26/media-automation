@@ -33,62 +33,68 @@ The pipeline is orchestrated using an **n8n workflow** that seamlessly bridges u
 
 ---
 
-## Blueprint Architecture
-
-The diagram below outlines the full data flow from raw video URL to published vertical videos across YouTube Shorts and Instagram Reels:
+## Architecture & Workflow Structure
 
 ```mermaid
 flowchart TD
-    subgraph S1["1. Intake & Validation"]
-        A["👤 User Form Submission<br/>(YouTube URL, Short Count, Style)"] --> B["🔍 Validate & Clean Inputs<br/>(Video ID Regex & Bounds Check)"]
+    A[Form Trigger: YouTube URL & Short Count] --> B[Validate Inputs]
+    B -->|Invalid| B_Err[Return Clear Input Error]
+    B -->|Valid| C[HTTP Request: Create Submagic Magic Clips Project]
+    C --> D[Wait 20s]
+    D --> E[HTTP Request: Check Submagic Status]
+    E --> F{Status?}
+    F -->|processing / transcribing| D
+    F -->|failed| F_Err[Return Submagic Failure Details]
+    F -->|completed| G[Code: Select & Qualify N Best Clips by Virality Score]
+    G -->|Insufficient Content| G_Warn[Explain Limitation to User]
+    G -->|N Clips Qualified| H[Loop Over Items: Split in Batches]
+    
+    subgraph Clip Processing Loop
+        H --> I[Check Duplicate Prevention DB]
+        I -->|Already Published| I_Skip[Skip Duplicate]
+        I -->|New Clip| J[Generate Metadata: YouTube & IG]
+        J --> K[HTTP Request: Download Submagic 1080x1920 MP4]
+        K --> L[YouTube Node: Upload Video Private]
+        L --> M[Meta Graph API: Create & Publish IG Reel Container]
+        M --> N[Save Result to DB: YouTube ID + IG Permalink]
+        N --> H
     end
-
-    subgraph S2["2. Media Processor Microservice (FastAPI + FFmpeg)"]
-        B --> C["⚡ POST /api/process-video<br/>(Media Processor Microservice)"]
-        C --> D["📥 Stream Download<br/>(yt-dlp Best MP4)"]
-        C --> E["📝 Transcript & Language Fetch<br/>(youtube-transcript-api)"]
-        D & E --> F["🧠 Virality & Segment Selection<br/>(Keyword Density, Pacing, Punctuation)"]
-        F --> G["🎬 Dual-Layer 9:16 Reframing<br/>(Boxblur Background + 1080x810 Centered FG)"]
-        G --> H["✨ High-Precision ASS Subtitles<br/>(libass Engine + Warm Gold Accents)"]
-        H --> I["🔊 Loudness Normalization<br/>(EBU R128 / -14 LUFS Audio)"]
-        I --> J["🌐 Serve on Local CDN<br/>(/clips/{id}.mp4)"]
-    end
-
-    subgraph S3["3. Batch Processing & Deduplication"]
-        J --> K["✂️ Split Clips Array"]
-        K --> L["🔁 Loop Over Each Clip (Batch Size: 1)"]
-        L --> M["🏷️ Metadata & Deduplication<br/>(MD5 Clip Hash, SEO Titles & Tags)"]
-    end
-
-    subgraph S4["4. Submagic AI Enhancement (Optional)"]
-        M --> N["🤖 Submit to Submagic API<br/>(Dynamic Templates & Zoom Effects)"]
-        N --> O["⏳ Poll Status & Download Final Render"]
-    end
-
-    subgraph S5["5. Multi-Platform Distribution"]
-        O --> P["▶️ Upload YouTube Short<br/>(YouTube Data API v3 / OAuth2)"]
-        O --> Q["📸 Publish Instagram Reel<br/>(Meta Graph API v21.0)"]
-    end
-
-    subgraph S6["6. Reporting & Analytics"]
-        P & Q --> R["📊 Aggregate Execution Results<br/>(Virality Scores, Direct URLs, Status)"]
-        R --> S["📋 Generate Executive Summary Report"]
-    end
-
-    classDef trigger fill:#4f46e5,stroke:#3730a3,color:#fff,stroke-width:2px;
-    classDef processor fill:#0284c7,stroke:#0369a1,color:#fff,stroke-width:2px;
-    classDef batch fill:#7c3aed,stroke:#5b21b6,color:#fff,stroke-width:2px;
-    classDef captions fill:#db2777,stroke:#9d174d,color:#fff,stroke-width:2px;
-    classDef dist fill:#dc2626,stroke:#991b1b,color:#fff,stroke-width:2px;
-    classDef report fill:#059669,stroke:#047857,color:#fff,stroke-width:2px;
-
-    class A,B trigger;
-    class C,D,E,F,G,H,I,J processor;
-    class K,L,M batch;
-    class N,O captions;
-    class P,Q dist;
-    class R,S report;
+    
+    H -->|Loop Finished| O[Generate Final Summary Report]
+    O --> P[Final Output to User / Webhook Response]
 ```
+
+### Detailed Component Specifications
+
+1. **User Input (`n8n-nodes-base.formTrigger`)**:
+   - `youtube_url`: String/URL, required (`https://www.youtube.com/watch?v=...`)
+   - `short_count`: Number of shorts to extract (default: `2`, configurable up to `10`)
+   - `template_name`: Dynamic caption style (`Hormozi 2`, `Adrian`, `Devin`, `Ali`, `Sara`, `Beast`)
+   - `privacy_status`: Target YouTube visibility (`private`, `unlisted`, `public`)
+
+2. **Input Validation (`n8n-nodes-base.code`)**:
+   - Sanitizes URL and validates standard YouTube and youtu.be regular expression patterns.
+   - Enforces positive integer bounds on `short_count`.
+   - Returns clear, formatted error message if inputs fail validation.
+
+3. **Submagic & Media Processor Video Pipeline**:
+   - **Submagic API Integration**: Creates a magic clips project (`POST /v1/projects/magic-clips`) and periodically polls every 15–20s until transcription and reframing complete.
+   - **Local High-Performance Engine (`media_processor.py`)**: Local microservice endpoint (`POST http://host.docker.internal:5050/api/process-video`) providing `yt-dlp` stream ingestion, automated transcript parsing, dual-layer FFmpeg 9:16 reframing, and ASS subtitles.
+
+4. **Virality Scoring & Clip Selection**:
+   - Evaluates candidate segments based on hook strength, pacing, sentiment, and shareability scores.
+   - Selects the top $N$ ranked clips and formats them for parallel or sequential processing.
+
+5. **Looping & Duplicate Prevention**:
+   - Splits batch into single clip iterations.
+   - Checks deduplication store by `(source_video_id, clip_start, clip_end)` to prevent redundant rendering or duplicate publishing.
+
+6. **Social Media Distribution**:
+   - **YouTube Shorts (`n8n-nodes-base.youTube`)**: Uploads video binary directly to YouTube with high-CTR titles, hashtags, and description.
+   - **Instagram Reels (`Meta Graph API`)**: Submits video to `v21.0/me/media` with `REELS` media type and publishes container.
+
+7. **Executive Summary Reporting**:
+   - Aggregates all live links, virality scores, upload statuses, and execution metrics into a clean executive summary report.
 
 ---
 
