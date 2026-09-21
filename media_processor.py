@@ -105,11 +105,122 @@ def detect_script_language(text: str) -> Optional[str]:
     return None
 
 
+ADULT_WORD_MAP = {
+    # Hindi Devanagari
+    'नंगापन': 'नं**पन',
+    'नंगा': 'नं**',
+    'नंगी': 'नं**',
+    'नंगे': 'नं**',
+    'गांडू': 'गां**',
+    'गांड': 'गां*',
+    'चूतियापा': 'चू****पा',
+    'चूतिया': 'चू***या',
+    'चूतिये': 'चू***ये',
+    'चूत': 'चू*',
+    'लौड़ा': 'लौ**',
+    'लौड़े': 'लौ**',
+    'लोड़ा': 'लो**',
+    'लोड़े': 'लो**',
+    'लंडू': 'लं**',
+    'लंड': 'लं*',
+    'भोसड़ीके': 'भो***के',
+    'भोसड़ीका': 'भो***का',
+    'भोसड़ी': 'भो***ड़ी',
+    'मादरचोद': 'मा***चोद',
+    'मादरजात': 'मा***जात',
+    'बहनचोद': 'ब***चोद',
+    'बेहेनचोद': 'ब***चोद',
+    'रंडी': 'रं**',
+    'हरामज़ादा': 'ह*****दा',
+    'हरामी': 'ह***मी',
+    'सेक्स': 'से**',
+    'हवस': 'ह**',
+    'मुठ': 'मु*',
+    'रांड': 'रां*',
+
+    # English
+    'motherfucker': 'm****rfucker',
+    'motherfucking': 'm****rfucking',
+    'fucking': 'f*****g',
+    'fucked': 'f****d',
+    'fucker': 'f****r',
+    'fucks': 'f***s',
+    'fuck': 'f**k',
+    'shitty': 'sh***y',
+    'shit': 'sh*t',
+    'bitches': 'b*****s',
+    'bitch': 'b***h',
+    'asshole': 'a*****e',
+    'ass': 'a**',
+    'bastard': 'b*****d',
+    'dick': 'd**k',
+    'pussy': 'p***y',
+    'cunt': 'c**t',
+    'cock': 'c**k',
+    'slut': 's**t',
+    'whore': 'wh**e',
+    'porn': 'p**n',
+    'porno': 'p***o',
+    'nude': 'n**e',
+    'naked': 'n***d',
+    'boobs': 'b***s',
+    'tits': 't**s',
+    'penis': 'p***s',
+    'vagina': 'v****a',
+    'orgasm': 'o****m',
+    'sex': 's*x',
+    'sexy': 's**y',
+
+    # Hinglish
+    'nangapan': 'n***apan',
+    'nanga': 'n***a',
+    'nangi': 'n***i',
+    'nange': 'n***e',
+    'chutiyapa': 'ch***yapa',
+    'chutiye': 'ch***ye',
+    'chutiya': 'ch***ya',
+    'bhosadike': 'bh***dike',
+    'bhosdika': 'bh***dika',
+    'bhosadi': 'bh***di',
+    'madarchod': 'm***rchod',
+    'behenchod': 'b***nchod',
+    'bhenchod': 'bh***chod',
+    'lauda': 'l***a',
+    'laude': 'l***e',
+    'loda': 'l***a',
+    'lode': 'l***e',
+    'lund': 'l**d',
+    'gandu': 'g**du',
+    'gaand': 'g***d',
+    'gand': 'g**d',
+    'randi': 'r***i',
+    'haramzada': 'h****zada',
+    'harami': 'h***mi'
+}
+
+
+def censor_adult_words(text: str) -> str:
+    """Masks adult/vulgar words (e.g. fuck -> f**k, नंगापन -> नं**पन) across English, Hindi, and Hinglish."""
+    if not text:
+        return text
+    result = text
+    # Sort keys by length descending to match compound words first
+    sorted_keys = sorted(ADULT_WORD_MAP.keys(), key=len, reverse=True)
+    for bad_word in sorted_keys:
+        replacement = ADULT_WORD_MAP[bad_word]
+        if bad_word.isascii():
+            pattern = re.compile(rf'\b{re.escape(bad_word)}\b', re.IGNORECASE)
+            result = pattern.sub(replacement, result)
+        else:
+            result = result.replace(bad_word, replacement)
+    return result
+
+
 def clean_transcript_text(text: str) -> str:
-    """Removes music markers, sound effect brackets, and formatting noise."""
+    """Removes music markers, sound effect brackets, formatting noise, and censors adult words."""
     t = re.sub(r'\[.*?\]|\(.*?\)|♪+|>>+', '', text)
     t = re.sub(r'\s+', ' ', t).strip()
-    return t
+    return censor_adult_words(t)
 
 
 def detect_and_fetch_transcript(
@@ -290,16 +401,17 @@ def analyze_and_select_segments(
                     total_score = heatmap_score + hook_score + rate_score + duration_fit
                     total_score = min(99.0, max(50.0, total_score))
 
-                    # Generate clean title from first sentence / line
+                    # Generate clean title from first sentence / line and censor adult words
                     first_sent = re.split(r'[.!?।|\n]', full_text)[0].strip()
-                    title = first_sent[:50] if len(first_sent) > 5 else f"Peak Highlight at {int(start_time)}s"
+                    raw_title = first_sent[:50] if len(first_sent) > 5 else f"Peak Highlight at {int(start_time)}s"
+                    title = censor_adult_words(raw_title)
 
                     candidate_segments.append({
                         "start_time": round(start_time, 2),
                         "end_time": round(end_time, 2),
                         "duration": round(dur, 2),
                         "score": round(total_score, 1),
-                        "text": full_text,
+                        "text": censor_adult_words(full_text),
                         "title": title,
                         "snippets": snippets_acc[:]
                     })
@@ -696,11 +808,11 @@ def process_video(req: ProcessRequest):
                     logger.warning(f"Could not upload captioned clip {idx+1}, falling back to clean: {ue}")
                     captioned_url = direct_url
 
-            lyrics_text = seg.get("text", "").strip()
+            lyrics_text = censor_adult_words(seg.get("text", "").strip())
 
             processed_clips.append({
                 "clip_index": idx + 1,
-                "title": seg["title"],
+                "title": censor_adult_words(seg["title"]),
                 "start_time": seg["start_time"],
                 "end_time": seg["end_time"],
                 "duration": seg["duration"],
@@ -711,7 +823,7 @@ def process_video(req: ProcessRequest):
                 "language_name": lang_name,
                 "direct_url": direct_url,
                 "captioned_url": captioned_url,
-                "video_title": video_title,
+                "video_title": censor_adult_words(video_title),
                 "video_type": video_type,
                 "recommended_template": "Sara" if video_type == "SONG" else "Hormozi 2",
                 "magic_zooms": False if video_type == "SONG" else True,
