@@ -34,8 +34,8 @@ An automated pipeline and FastAPI microservice designed to transform long-form Y
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/<your-username>/<repo-name>.git
-   cd <repo-name>
+   git clone https://github.com/Adityadwis-26/TY-automation.git
+   cd TY-automation
    ```
 
 2. (Optional) Create and activate a virtual environment:
