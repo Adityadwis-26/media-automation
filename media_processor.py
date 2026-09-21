@@ -27,7 +27,7 @@ import yt_dlp
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("media_processor")
 
-app = FastAPI(title="YouTube Shorts Media Processor", version="1.2.0")
+app = FastAPI(title="Media Automation Processor", version="1.2.0")
 
 app.add_middleware(
     CORSMiddleware,

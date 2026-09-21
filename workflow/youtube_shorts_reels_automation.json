@@ -1,0 +1,1200 @@
+{
+  "id": "DNEQkCJWS0vNEEvb",
+  "name": "YouTube to Shorts & Reels Automation",
+  "active": true,
+  "isArchived": false,
+  "versionId": "469d3dab-900e-4716-9299-93bb4182fe65",
+  "activeVersionId": "469d3dab-900e-4716-9299-93bb4182fe65",
+  "triggerCount": 1,
+  "createdAt": "2026-09-19T17:08:28.029Z",
+  "updatedAt": "2026-09-20T08:24:42.803Z",
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true
+  },
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Validate Inputs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Inputs": {
+      "main": [
+        [
+          {
+            "node": "Process Video & Reframe 9:16",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Video & Reframe 9:16": {
+      "main": [
+        [
+          {
+            "node": "Split Clips",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Clips": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Clips",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Metadata & Check Duplicates": {
+      "main": [
+        [
+          {
+            "node": "Submit Clip to Submagic",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Submit Clip to Submagic": {
+      "main": [
+        [
+          {
+            "node": "Wait 15s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 15s": {
+      "main": [
+        [
+          {
+            "node": "Poll Submagic Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Poll Submagic Status": {
+      "main": [
+        [
+          {
+            "node": "Is Submagic Completed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Submagic Completed?": {
+      "main": [
+        [
+          {
+            "node": "Download Final Video",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait 15s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Final Video": {
+      "main": [
+        [
+          {
+            "node": "Upload YouTube Short",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload YouTube Short": {
+      "main": [
+        [
+          {
+            "node": "Process YouTube Result",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Process YouTube Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process YouTube Result": {
+      "main": [
+        [
+          {
+            "node": "Publish Instagram Reel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Publish Instagram Reel": {
+      "main": [
+        [
+          {
+            "node": "Process Instagram Result",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Process Instagram Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Instagram Result": {
+      "main": [
+        [
+          {
+            "node": "Record Result & Collect",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Record Result & Collect": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Clips",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Clips": {
+      "main": [
+        [
+          {
+            "node": "Generate Final Summary",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Generate Metadata & Check Duplicates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "c2276bab-a0ac-4e7d-9895-de78a0374d50",
+      "name": "On form submission",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        0,
+        192
+      ],
+      "parameters": {
+        "formTitle": "YouTube to Shorts & Reels Automation",
+        "formDescription": "Create viral YouTube Shorts and Instagram Reels using Submagic AI captioning and reframing.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "YouTube URL",
+              "fieldName": "youtube_url",
+              "fieldType": "text",
+              "placeholder": "https://www.youtube.com/watch?v=...",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "How many Shorts do you want to create?",
+              "fieldName": "short_count",
+              "fieldType": "number",
+              "defaultValue": "2",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Submagic Caption Template",
+              "fieldName": "template_name",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Hormozi 2"
+                  },
+                  {
+                    "option": "Adrian"
+                  },
+                  {
+                    "option": "Devin"
+                  },
+                  {
+                    "option": "Ali"
+                  },
+                  {
+                    "option": "Sara"
+                  },
+                  {
+                    "option": "Beast"
+                  }
+                ]
+              },
+              "defaultValue": "Hormozi 2"
+            },
+            {
+              "fieldLabel": "YouTube Visibility",
+              "fieldName": "privacy_status",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "private"
+                  },
+                  {
+                    "option": "unlisted"
+                  },
+                  {
+                    "option": "public"
+                  }
+                ]
+              },
+              "defaultValue": "private"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "webhookId": "cc99ba52-7ca7-4b2c-bb52-d790aa12c256"
+    },
+    {
+      "id": "357a6520-6036-4770-8cd2-d470e1a4ff79",
+      "name": "Validate Inputs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        192
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "\nconst input = $input.first().json;\nconst rawUrl = (input.youtube_url || input['YouTube URL'] || '').trim();\nconst rawCount = input.short_count || input['How many Shorts do you want to create?'] || 2;\nconst templateName = input.template_name || 'Hormozi 2';\nconst privacyStatus = input.privacy_status || 'private';\n\nif (!rawUrl) {\n  throw new Error('YouTube URL is required.');\n}\n\nconst ytRegex = /(?:https?:\\/\\/)?(?:www\\.)?(?:youtube\\.com\\/(?:watch\\?v=|shorts\\/)|youtu\\.be\\/)([a-zA-Z0-9_-]{11})/;\nconst match = rawUrl.match(ytRegex);\nif (!match) {\n  throw new Error('Invalid YouTube URL: ' + rawUrl + '. Please provide a valid youtube.com or youtu.be link.');\n}\nconst videoId = match[1];\nconst cleanUrl = 'https://www.youtube.com/watch?v=' + videoId;\n\nconst shortCount = parseInt(rawCount, 10);\nif (isNaN(shortCount) || shortCount <= 0) {\n  throw new Error('Short count must be a positive integer greater than 0.');\n}\nif (shortCount > 10) {\n  throw new Error('Maximum configurable Shorts per execution is 10.');\n}\n\nreturn [{\n  json: {\n    youtube_url: cleanUrl,\n    source_video_id: videoId,\n    short_count: shortCount,\n    template_name: templateName,\n    privacy_status: privacyStatus,\n    timestamp: new Date().toISOString()\n  }\n}];\n"
+      }
+    },
+    {
+      "id": "23464a1a-3113-4ce8-b40f-6d540b5e3de1",
+      "name": "Process Video & Reframe 9:16",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        448,
+        192
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:5050/api/process-video",
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ youtube_url: $json.youtube_url, short_count: parseInt($json.short_count, 10) || 2 }) }}",
+        "options": {
+          "timeout": 600000
+        }
+      }
+    },
+    {
+      "id": "c1ea0977-c7ea-4ba3-b820-de2df7391d81",
+      "name": "Split Clips",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        192
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "\nconst data = $input.first().json;\nconst initial = $('Validate Inputs').first().json;\nconst clips = data.clips || [];\n\nif (clips.length === 0) {\n  throw new Error('No suitable clips could be created from the source video.');\n}\n\nreturn clips.map(clip => ({\n  json: {\n    ...clip,\n    source_video_id: data.video_id,\n    source_url: initial.youtube_url,\n    total_requested: data.total_requested,\n    total_created: data.total_created,\n    template_name: initial.template_name,\n    privacy_status: initial.privacy_status\n  }\n}));\n"
+      }
+    },
+    {
+      "id": "9f9791f8-f6e3-4358-80f8-6102146e4976",
+      "name": "Generate Final Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "\nconst staticData = $getWorkflowStaticData('global');\nconst results = staticData.processedShorts || [];\n\n// Reset static data for next execution\nstaticData.processedShorts = [];\n\nconst initialInput = $('Validate Inputs').first().json;\nconst requested = initialInput.short_count;\nconst created = results.length;\n\nlet successYt = 0;\nlet successIg = 0;\n\nlet lines = [\n  '\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550',\n  '\ud83c\udfac SHORTS & REELS AUTOMATION SUMMARY',\n  '\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550',\n  'Source YouTube Video: ' + initialInput.youtube_url,\n  'Shorts Requested: ' + requested,\n  'Shorts Created: ' + created,\n  ''\n];\n\nresults.forEach(r => {\n  if (r.youtube_status === 'success') successYt++;\n  if (r.instagram_status === 'success') successIg++;\n\n  lines.push('\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500');\n  lines.push('\ud83d\udccc SHORT ' + r.clip_index + ': ' + r.clip_title);\n  lines.push('   Virality Score: ' + Math.round(r.virality_score) + '/100 | Duration: ' + Math.round(r.duration) + 's');\n  lines.push('   YouTube: ' + (r.youtube_url ? r.youtube_url : '\u2717 (' + (r.youtube_error || 'OAuth pending') + ')'));\n  lines.push('   Instagram: ' + (r.instagram_permalink ? r.instagram_permalink : '\u2717 (' + (r.instagram_error || 'OAuth pending') + ')'));\n  lines.push('   Direct Video: ' + r.direct_url);\n});\n\nlines.push('\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500');\nlines.push('');\nlines.push('Platform Upload Totals:');\nlines.push('YouTube Uploads: ' + successYt + '/' + created);\nlines.push('Instagram Reels: ' + successIg + '/' + created);\n\nif (successYt < created) {\n  lines.push('');\n  lines.push('\u2139\ufe0f Note: To enable live YouTube uploads, authorize the YouTube OAuth2 credential in n8n.');\n}\nif (successIg < created) {\n  lines.push('\u2139\ufe0f Note: To enable live Instagram publishing, configure your Meta/Instagram Graph API token.');\n}\n\nconst summaryText = lines.join('\\n');\n\nreturn [{\n  json: {\n    summary: summaryText,\n    total_requested: requested,\n    total_created: created,\n    successful_youtube: successYt,\n    successful_instagram: successIg,\n    results: results\n  }\n}];\n"
+      }
+    },
+    {
+      "id": "930a378d-ef4d-4835-9e9d-82e92b277bd3",
+      "name": "Generate Metadata & Check Duplicates",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        192
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const item = $input.first().json;\n\nconst hashStr = item.source_video_id + '_' + Math.round(item.start_time * 10) + '_' + Math.round(item.end_time * 10);\nlet hashVal = 0;\nfor (let i = 0; i < hashStr.length; i++) {\n  hashVal = ((hashVal << 5) - hashVal) + hashStr.charCodeAt(i);\n  hashVal |= 0;\n}\nconst clipHash = (item.source_video_id + '_' + Math.abs(hashVal).toString(16)).slice(0, 32);\n\nconst titleClean = (item.title || 'Viral Short Highlight').replace(/[\"']/g, '').replace(/\\r?\\n/g, ' ').trim();\nconst snippet = (item.transcript_snippet || item.lyrics || '').replace(/\\r?\\n/g, ' ').trim();\n\nlet ytTitle = titleClean;\nif (ytTitle.length > 55) {\n  ytTitle = ytTitle.slice(0, 52) + '...';\n}\nytTitle = ytTitle + ' #Shorts';\n\nconst ytDesc = titleClean + '\\n\\n' + (snippet ? snippet : 'Watch until the end!') + '\\n\\nSource: ' + item.source_url + '\\nLanguage: ' + (item.language_name || item.language || 'Original') + '\\nVirality Score: ' + Math.round(item.virality_score) + '/100\\n\\n#shorts #viral #reels #trending';\n\nconst ytTags = 'shorts,viral,reels,trending,shortsfeed';\n\nconst igCaption = '\u26a1 ' + titleClean + '\\n\\n' + (snippet ? snippet : 'Save this for later!') + '\\n\\n\ud83d\udc49 Follow for more high-value clips!\\n\\n#reels #reelsinstagram #viralreels #shorts';\n\nreturn [{\n  json: {\n    ...item,\n    clip_hash: clipHash,\n    yt_title: ytTitle,\n    yt_description: ytDesc,\n    yt_tags: ytTags,\n    ig_caption: igCaption\n  }\n}];\n"
+      }
+    },
+    {
+      "id": "5283f06e-50e0-4597-a36b-3bf709b4a974",
+      "name": "Submit Clip to Submagic",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1344,
+        192
+      ],
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "contentType": "json",
+        "genericAuthType": "httpHeaderAuth",
+        "jsonBody": "={{ JSON.stringify({ title: $json.yt_title || $json.title || 'Viral Short', language: $json.language || 'en', templateName: $json.recommended_template || $json.template_name || 'Hormozi 2', videoUrl: $json.direct_url, magicZooms: $json.magic_zooms === false ? false : true, magicBrolls: $json.magic_brolls === false ? false : true }) }}",
+        "method": "POST",
+        "options": {},
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "https://api.submagic.co/v1/projects"
+      }
+    },
+    {
+      "id": "0d9f5cc8-0b1f-4c0e-ab41-e280c8f563cd",
+      "name": "Wait 15s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1568,
+        192
+      ],
+      "parameters": {
+        "resume": "timeInterval",
+        "amount": 15,
+        "unit": "seconds"
+      },
+      "webhookId": "dc29c19c-f2d4-4490-a488-06336b176c61"
+    },
+    {
+      "id": "790b3fcb-d9a8-4137-adf2-30a552ee7504",
+      "name": "Poll Submagic Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1792,
+        128
+      ],
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "method": "GET",
+        "options": {},
+        "url": "=https://api.submagic.co/v1/projects/{{ $(\"Submit Clip to Submagic\").first().json.id }}"
+      }
+    },
+    {
+      "id": "25ca26e3-f6d1-46d3-93d6-c17b5f174dc7",
+      "name": "Is Submagic Completed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2016,
+        192
+      ],
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.status }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              },
+              "rightValue": "completed"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "8a163e96-72dd-45a8-9863-e28bdb55a190",
+      "name": "Download Final Video",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        2240,
+        192
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $json.downloadUrl || $json.directUrl || $json.captioned_url || $(\"Submit Clip to Submagic\").first().json.captioned_url || $(\"Submit Clip to Submagic\").first().json.direct_url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "data"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "5a40d855-3ad2-4691-bdaf-2c87678d1f2b",
+      "name": "Upload YouTube Short",
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [
+        2464,
+        192
+      ],
+      "parameters": {
+        "resource": "video",
+        "operation": "upload",
+        "binaryProperty": "data",
+        "title": "={{ $(\"Generate Metadata & Check Duplicates\").first().json.yt_title }}",
+        "options": {
+          "description": "={{ $(\"Generate Metadata & Check Duplicates\").first().json.yt_description }}",
+          "tags": "={{ $(\"Generate Metadata & Check Duplicates\").first().json.yt_tags }}",
+          "privacyStatus": "={{ $(\"Generate Metadata & Check Duplicates\").first().json.privacy_status || \"private\" }}"
+        }
+      },
+      "disabled": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "id": "f7da80d4-7b98-4c50-8739-bf52b4271655",
+      "name": "Process YouTube Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2688,
+        192
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "\nconst ytResult = $input.first().json;\nconst clipData = $('Generate Metadata & Check Duplicates').first().json;\n\nlet ytVideoId = null;\nlet ytUrl = null;\nlet ytStatus = 'failed';\nlet ytError = null;\n\nif (ytResult.id) {\n  ytVideoId = ytResult.id;\n  ytUrl = 'https://www.youtube.com/shorts/' + ytVideoId;\n  ytStatus = 'success';\n} else if (ytResult.error) {\n  ytError = ytResult.error.message || JSON.stringify(ytResult.error);\n} else {\n  ytError = 'YouTube OAuth2 authorization required in n8n credentials';\n}\n\nreturn [{\n  json: {\n    ...clipData,\n    youtube_video_id: ytVideoId,\n    youtube_url: ytUrl,\n    youtube_status: ytStatus,\n    youtube_error: ytError\n  }\n}];\n"
+      }
+    },
+    {
+      "id": "0872d267-ea11-4bfb-a092-a448f7084fce",
+      "name": "Publish Instagram Reel",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        2912,
+        192
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v21.0/me/media",
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ media_type: 'REELS', video_url: $json.direct_url, caption: $json.ig_caption }) }}",
+        "options": {}
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "id": "998abe07-832e-47bc-b72b-380bb766a854",
+      "name": "Process Instagram Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3136,
+        192
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "\nconst igResult = $input.first().json;\nconst current = $('Process YouTube Result').first().json;\n\nlet igMediaId = null;\nlet igPermalink = null;\nlet igStatus = 'failed';\nlet igError = null;\n\nif (igResult.id) {\n  igMediaId = igResult.id;\n  igPermalink = igResult.permalink || ('https://www.instagram.com/reel/' + igMediaId);\n  igStatus = 'success';\n} else if (igResult.error) {\n  igError = igResult.error.message || JSON.stringify(igResult.error);\n} else {\n  igError = 'Meta/Instagram OAuth authorization required';\n}\n\nreturn [{\n  json: {\n    ...current,\n    instagram_media_id: igMediaId,\n    instagram_permalink: igPermalink,\n    instagram_status: igStatus,\n    instagram_error: igError,\n    processed_at: new Date().toISOString()\n  }\n}];\n"
+      }
+    },
+    {
+      "id": "9f7b57bd-a252-4bfc-b841-ba83a57ec046",
+      "name": "Record Result & Collect",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3360,
+        272
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "\nconst item = $input.first().json;\n\nconst staticData = $getWorkflowStaticData('global');\nif (!staticData.processedShorts) {\n  staticData.processedShorts = [];\n}\n\nstaticData.processedShorts.push({\n  clip_index: item.clip_index,\n  clip_title: item.title || item.yt_title,\n  duration: item.duration,\n  virality_score: item.virality_score,\n  youtube_url: item.youtube_url,\n  youtube_status: item.youtube_status,\n  youtube_error: item.youtube_error,\n  instagram_permalink: item.instagram_permalink,\n  instagram_status: item.instagram_status,\n  instagram_error: item.instagram_error,\n  direct_url: item.direct_url,\n  clip_hash: item.clip_hash\n});\n\nreturn [{ json: item }];\n"
+      }
+    },
+    {
+      "id": "6ca1dfd5-91af-4004-8e38-d2bfb1edb295",
+      "name": "Loop Over Clips",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        896,
+        192
+      ],
+      "parameters": {
+        "batchSize": 1
+      }
+    }
+  ],
+  "nodeGroups": [],
+  "activeVersion": {
+    "nodes": [
+      {
+        "id": "c2276bab-a0ac-4e7d-9895-de78a0374d50",
+        "name": "On form submission",
+        "type": "n8n-nodes-base.formTrigger",
+        "typeVersion": 2.6,
+        "position": [
+          0,
+          192
+        ],
+        "parameters": {
+          "formTitle": "YouTube to Shorts & Reels Automation",
+          "formDescription": "Create viral YouTube Shorts and Instagram Reels using Submagic AI captioning and reframing.",
+          "formFields": {
+            "values": [
+              {
+                "fieldLabel": "YouTube URL",
+                "fieldName": "youtube_url",
+                "fieldType": "text",
+                "placeholder": "https://www.youtube.com/watch?v=...",
+                "requiredField": true
+              },
+              {
+                "fieldLabel": "How many Shorts do you want to create?",
+                "fieldName": "short_count",
+                "fieldType": "number",
+                "defaultValue": "2",
+                "requiredField": true
+              },
+              {
+                "fieldLabel": "Submagic Caption Template",
+                "fieldName": "template_name",
+                "fieldType": "dropdown",
+                "fieldOptions": {
+                  "values": [
+                    {
+                      "option": "Hormozi 2"
+                    },
+                    {
+                      "option": "Adrian"
+                    },
+                    {
+                      "option": "Devin"
+                    },
+                    {
+                      "option": "Ali"
+                    },
+                    {
+                      "option": "Sara"
+                    },
+                    {
+                      "option": "Beast"
+                    }
+                  ]
+                },
+                "defaultValue": "Hormozi 2"
+              },
+              {
+                "fieldLabel": "YouTube Visibility",
+                "fieldName": "privacy_status",
+                "fieldType": "dropdown",
+                "fieldOptions": {
+                  "values": [
+                    {
+                      "option": "private"
+                    },
+                    {
+                      "option": "unlisted"
+                    },
+                    {
+                      "option": "public"
+                    }
+                  ]
+                },
+                "defaultValue": "private"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "webhookId": "cc99ba52-7ca7-4b2c-bb52-d790aa12c256"
+      },
+      {
+        "id": "357a6520-6036-4770-8cd2-d470e1a4ff79",
+        "name": "Validate Inputs",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          224,
+          192
+        ],
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "language": "javaScript",
+          "jsCode": "\nconst input = $input.first().json;\nconst rawUrl = (input.youtube_url || input['YouTube URL'] || '').trim();\nconst rawCount = input.short_count || input['How many Shorts do you want to create?'] || 2;\nconst templateName = input.template_name || 'Hormozi 2';\nconst privacyStatus = input.privacy_status || 'private';\n\nif (!rawUrl) {\n  throw new Error('YouTube URL is required.');\n}\n\nconst ytRegex = /(?:https?:\\/\\/)?(?:www\\.)?(?:youtube\\.com\\/(?:watch\\?v=|shorts\\/)|youtu\\.be\\/)([a-zA-Z0-9_-]{11})/;\nconst match = rawUrl.match(ytRegex);\nif (!match) {\n  throw new Error('Invalid YouTube URL: ' + rawUrl + '. Please provide a valid youtube.com or youtu.be link.');\n}\nconst videoId = match[1];\nconst cleanUrl = 'https://www.youtube.com/watch?v=' + videoId;\n\nconst shortCount = parseInt(rawCount, 10);\nif (isNaN(shortCount) || shortCount <= 0) {\n  throw new Error('Short count must be a positive integer greater than 0.');\n}\nif (shortCount > 10) {\n  throw new Error('Maximum configurable Shorts per execution is 10.');\n}\n\nreturn [{\n  json: {\n    youtube_url: cleanUrl,\n    source_video_id: videoId,\n    short_count: shortCount,\n    template_name: templateName,\n    privacy_status: privacyStatus,\n    timestamp: new Date().toISOString()\n  }\n}];\n"
+        }
+      },
+      {
+        "id": "23464a1a-3113-4ce8-b40f-6d540b5e3de1",
+        "name": "Process Video & Reframe 9:16",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.4,
+        "position": [
+          448,
+          192
+        ],
+        "parameters": {
+          "method": "POST",
+          "url": "http://host.docker.internal:5050/api/process-video",
+          "sendBody": true,
+          "contentType": "json",
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify({ youtube_url: $json.youtube_url, short_count: parseInt($json.short_count, 10) || 2 }) }}",
+          "options": {
+            "timeout": 600000
+          }
+        }
+      },
+      {
+        "id": "c1ea0977-c7ea-4ba3-b820-de2df7391d81",
+        "name": "Split Clips",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          672,
+          192
+        ],
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "language": "javaScript",
+          "jsCode": "\nconst data = $input.first().json;\nconst initial = $('Validate Inputs').first().json;\nconst clips = data.clips || [];\n\nif (clips.length === 0) {\n  throw new Error('No suitable clips could be created from the source video.');\n}\n\nreturn clips.map(clip => ({\n  json: {\n    ...clip,\n    source_video_id: data.video_id,\n    source_url: initial.youtube_url,\n    total_requested: data.total_requested,\n    total_created: data.total_created,\n    template_name: initial.template_name,\n    privacy_status: initial.privacy_status\n  }\n}));\n"
+        }
+      },
+      {
+        "id": "9f9791f8-f6e3-4358-80f8-6102146e4976",
+        "name": "Generate Final Summary",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1120,
+          0
+        ],
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "language": "javaScript",
+          "jsCode": "\nconst staticData = $getWorkflowStaticData('global');\nconst results = staticData.processedShorts || [];\n\n// Reset static data for next execution\nstaticData.processedShorts = [];\n\nconst initialInput = $('Validate Inputs').first().json;\nconst requested = initialInput.short_count;\nconst created = results.length;\n\nlet successYt = 0;\nlet successIg = 0;\n\nlet lines = [\n  '\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550',\n  '\ud83c\udfac SHORTS & REELS AUTOMATION SUMMARY',\n  '\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550',\n  'Source YouTube Video: ' + initialInput.youtube_url,\n  'Shorts Requested: ' + requested,\n  'Shorts Created: ' + created,\n  ''\n];\n\nresults.forEach(r => {\n  if (r.youtube_status === 'success') successYt++;\n  if (r.instagram_status === 'success') successIg++;\n\n  lines.push('\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500');\n  lines.push('\ud83d\udccc SHORT ' + r.clip_index + ': ' + r.clip_title);\n  lines.push('   Virality Score: ' + Math.round(r.virality_score) + '/100 | Duration: ' + Math.round(r.duration) + 's');\n  lines.push('   YouTube: ' + (r.youtube_url ? r.youtube_url : '\u2717 (' + (r.youtube_error || 'OAuth pending') + ')'));\n  lines.push('   Instagram: ' + (r.instagram_permalink ? r.instagram_permalink : '\u2717 (' + (r.instagram_error || 'OAuth pending') + ')'));\n  lines.push('   Direct Video: ' + r.direct_url);\n});\n\nlines.push('\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500');\nlines.push('');\nlines.push('Platform Upload Totals:');\nlines.push('YouTube Uploads: ' + successYt + '/' + created);\nlines.push('Instagram Reels: ' + successIg + '/' + created);\n\nif (successYt < created) {\n  lines.push('');\n  lines.push('\u2139\ufe0f Note: To enable live YouTube uploads, authorize the YouTube OAuth2 credential in n8n.');\n}\nif (successIg < created) {\n  lines.push('\u2139\ufe0f Note: To enable live Instagram publishing, configure your Meta/Instagram Graph API token.');\n}\n\nconst summaryText = lines.join('\\n');\n\nreturn [{\n  json: {\n    summary: summaryText,\n    total_requested: requested,\n    total_created: created,\n    successful_youtube: successYt,\n    successful_instagram: successIg,\n    results: results\n  }\n}];\n"
+        }
+      },
+      {
+        "id": "930a378d-ef4d-4835-9e9d-82e92b277bd3",
+        "name": "Generate Metadata & Check Duplicates",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1120,
+          192
+        ],
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "language": "javaScript",
+          "jsCode": "const item = $input.first().json;\n\nconst hashStr = item.source_video_id + '_' + Math.round(item.start_time * 10) + '_' + Math.round(item.end_time * 10);\nlet hashVal = 0;\nfor (let i = 0; i < hashStr.length; i++) {\n  hashVal = ((hashVal << 5) - hashVal) + hashStr.charCodeAt(i);\n  hashVal |= 0;\n}\nconst clipHash = (item.source_video_id + '_' + Math.abs(hashVal).toString(16)).slice(0, 32);\n\nconst titleClean = (item.title || 'Viral Short Highlight').replace(/[\"']/g, '').replace(/\\r?\\n/g, ' ').trim();\nconst snippet = (item.transcript_snippet || item.lyrics || '').replace(/\\r?\\n/g, ' ').trim();\n\nlet ytTitle = titleClean;\nif (ytTitle.length > 55) {\n  ytTitle = ytTitle.slice(0, 52) + '...';\n}\nytTitle = ytTitle + ' #Shorts';\n\nconst ytDesc = titleClean + '\\n\\n' + (snippet ? snippet : 'Watch until the end!') + '\\n\\nSource: ' + item.source_url + '\\nLanguage: ' + (item.language_name || item.language || 'Original') + '\\nVirality Score: ' + Math.round(item.virality_score) + '/100\\n\\n#shorts #viral #reels #trending';\n\nconst ytTags = 'shorts,viral,reels,trending,shortsfeed';\n\nconst igCaption = '\u26a1 ' + titleClean + '\\n\\n' + (snippet ? snippet : 'Save this for later!') + '\\n\\n\ud83d\udc49 Follow for more high-value clips!\\n\\n#reels #reelsinstagram #viralreels #shorts';\n\nreturn [{\n  json: {\n    ...item,\n    clip_hash: clipHash,\n    yt_title: ytTitle,\n    yt_description: ytDesc,\n    yt_tags: ytTags,\n    ig_caption: igCaption\n  }\n}];\n"
+        }
+      },
+      {
+        "id": "5283f06e-50e0-4597-a36b-3bf709b4a974",
+        "name": "Submit Clip to Submagic",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.4,
+        "position": [
+          1344,
+          192
+        ],
+        "parameters": {
+          "authentication": "genericCredentialType",
+          "contentType": "json",
+          "genericAuthType": "httpHeaderAuth",
+          "jsonBody": "={{ JSON.stringify({ title: $json.yt_title || $json.title || 'Viral Short', language: $json.language || 'en', templateName: $json.recommended_template || $json.template_name || 'Hormozi 2', videoUrl: $json.direct_url, magicZooms: $json.magic_zooms === false ? false : true, magicBrolls: $json.magic_brolls === false ? false : true }) }}",
+          "method": "POST",
+          "options": {},
+          "sendBody": true,
+          "specifyBody": "json",
+          "url": "https://api.submagic.co/v1/projects"
+        }
+      },
+      {
+        "id": "0d9f5cc8-0b1f-4c0e-ab41-e280c8f563cd",
+        "name": "Wait 15s",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          1568,
+          192
+        ],
+        "parameters": {
+          "resume": "timeInterval",
+          "amount": 15,
+          "unit": "seconds"
+        },
+        "webhookId": "dc29c19c-f2d4-4490-a488-06336b176c61"
+      },
+      {
+        "id": "790b3fcb-d9a8-4137-adf2-30a552ee7504",
+        "name": "Poll Submagic Status",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.4,
+        "position": [
+          1792,
+          128
+        ],
+        "parameters": {
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "method": "GET",
+          "options": {},
+          "url": "=https://api.submagic.co/v1/projects/{{ $(\"Submit Clip to Submagic\").first().json.id }}"
+        }
+      },
+      {
+        "id": "25ca26e3-f6d1-46d3-93d6-c17b5f174dc7",
+        "name": "Is Submagic Completed?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          2016,
+          192
+        ],
+        "parameters": {
+          "conditions": {
+            "combinator": "and",
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict"
+            },
+            "conditions": [
+              {
+                "leftValue": "={{ $json.status }}",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                },
+                "rightValue": "completed"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "8a163e96-72dd-45a8-9863-e28bdb55a190",
+        "name": "Download Final Video",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.4,
+        "position": [
+          2240,
+          192
+        ],
+        "parameters": {
+          "method": "GET",
+          "url": "={{ $json.downloadUrl || $json.directUrl || $json.captioned_url || $(\"Submit Clip to Submagic\").first().json.captioned_url || $(\"Submit Clip to Submagic\").first().json.direct_url }}",
+          "options": {
+            "response": {
+              "response": {
+                "responseFormat": "file",
+                "outputPropertyName": "data"
+              }
+            }
+          }
+        }
+      },
+      {
+        "id": "5a40d855-3ad2-4691-bdaf-2c87678d1f2b",
+        "name": "Upload YouTube Short",
+        "type": "n8n-nodes-base.youTube",
+        "typeVersion": 1,
+        "position": [
+          2464,
+          192
+        ],
+        "parameters": {
+          "resource": "video",
+          "operation": "upload",
+          "binaryProperty": "data",
+          "title": "={{ $(\"Generate Metadata & Check Duplicates\").first().json.yt_title }}",
+          "options": {
+            "description": "={{ $(\"Generate Metadata & Check Duplicates\").first().json.yt_description }}",
+            "tags": "={{ $(\"Generate Metadata & Check Duplicates\").first().json.yt_tags }}",
+            "privacyStatus": "={{ $(\"Generate Metadata & Check Duplicates\").first().json.privacy_status || \"private\" }}"
+          }
+        },
+        "disabled": true,
+        "onError": "continueErrorOutput"
+      },
+      {
+        "id": "f7da80d4-7b98-4c50-8739-bf52b4271655",
+        "name": "Process YouTube Result",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2688,
+          192
+        ],
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "language": "javaScript",
+          "jsCode": "\nconst ytResult = $input.first().json;\nconst clipData = $('Generate Metadata & Check Duplicates').first().json;\n\nlet ytVideoId = null;\nlet ytUrl = null;\nlet ytStatus = 'failed';\nlet ytError = null;\n\nif (ytResult.id) {\n  ytVideoId = ytResult.id;\n  ytUrl = 'https://www.youtube.com/shorts/' + ytVideoId;\n  ytStatus = 'success';\n} else if (ytResult.error) {\n  ytError = ytResult.error.message || JSON.stringify(ytResult.error);\n} else {\n  ytError = 'YouTube OAuth2 authorization required in n8n credentials';\n}\n\nreturn [{\n  json: {\n    ...clipData,\n    youtube_video_id: ytVideoId,\n    youtube_url: ytUrl,\n    youtube_status: ytStatus,\n    youtube_error: ytError\n  }\n}];\n"
+        }
+      },
+      {
+        "id": "0872d267-ea11-4bfb-a092-a448f7084fce",
+        "name": "Publish Instagram Reel",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.4,
+        "position": [
+          2912,
+          192
+        ],
+        "parameters": {
+          "method": "POST",
+          "url": "https://graph.facebook.com/v21.0/me/media",
+          "sendBody": true,
+          "contentType": "json",
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify({ media_type: 'REELS', video_url: $json.direct_url, caption: $json.ig_caption }) }}",
+          "options": {}
+        },
+        "onError": "continueErrorOutput"
+      },
+      {
+        "id": "998abe07-832e-47bc-b72b-380bb766a854",
+        "name": "Process Instagram Result",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          3136,
+          192
+        ],
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "language": "javaScript",
+          "jsCode": "\nconst igResult = $input.first().json;\nconst current = $('Process YouTube Result').first().json;\n\nlet igMediaId = null;\nlet igPermalink = null;\nlet igStatus = 'failed';\nlet igError = null;\n\nif (igResult.id) {\n  igMediaId = igResult.id;\n  igPermalink = igResult.permalink || ('https://www.instagram.com/reel/' + igMediaId);\n  igStatus = 'success';\n} else if (igResult.error) {\n  igError = igResult.error.message || JSON.stringify(igResult.error);\n} else {\n  igError = 'Meta/Instagram OAuth authorization required';\n}\n\nreturn [{\n  json: {\n    ...current,\n    instagram_media_id: igMediaId,\n    instagram_permalink: igPermalink,\n    instagram_status: igStatus,\n    instagram_error: igError,\n    processed_at: new Date().toISOString()\n  }\n}];\n"
+        }
+      },
+      {
+        "id": "9f7b57bd-a252-4bfc-b841-ba83a57ec046",
+        "name": "Record Result & Collect",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          3360,
+          272
+        ],
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "language": "javaScript",
+          "jsCode": "\nconst item = $input.first().json;\n\nconst staticData = $getWorkflowStaticData('global');\nif (!staticData.processedShorts) {\n  staticData.processedShorts = [];\n}\n\nstaticData.processedShorts.push({\n  clip_index: item.clip_index,\n  clip_title: item.title || item.yt_title,\n  duration: item.duration,\n  virality_score: item.virality_score,\n  youtube_url: item.youtube_url,\n  youtube_status: item.youtube_status,\n  youtube_error: item.youtube_error,\n  instagram_permalink: item.instagram_permalink,\n  instagram_status: item.instagram_status,\n  instagram_error: item.instagram_error,\n  direct_url: item.direct_url,\n  clip_hash: item.clip_hash\n});\n\nreturn [{ json: item }];\n"
+        }
+      },
+      {
+        "id": "6ca1dfd5-91af-4004-8e38-d2bfb1edb295",
+        "name": "Loop Over Clips",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          896,
+          192
+        ],
+        "parameters": {
+          "batchSize": 1
+        }
+      }
+    ],
+    "connections": {
+      "On form submission": {
+        "main": [
+          [
+            {
+              "node": "Validate Inputs",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Validate Inputs": {
+        "main": [
+          [
+            {
+              "node": "Process Video & Reframe 9:16",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Process Video & Reframe 9:16": {
+        "main": [
+          [
+            {
+              "node": "Split Clips",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Split Clips": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Clips",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Generate Metadata & Check Duplicates": {
+        "main": [
+          [
+            {
+              "node": "Submit Clip to Submagic",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Submit Clip to Submagic": {
+        "main": [
+          [
+            {
+              "node": "Wait 15s",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait 15s": {
+        "main": [
+          [
+            {
+              "node": "Poll Submagic Status",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Poll Submagic Status": {
+        "main": [
+          [
+            {
+              "node": "Is Submagic Completed?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Is Submagic Completed?": {
+        "main": [
+          [
+            {
+              "node": "Download Final Video",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Wait 15s",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Download Final Video": {
+        "main": [
+          [
+            {
+              "node": "Upload YouTube Short",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Upload YouTube Short": {
+        "main": [
+          [
+            {
+              "node": "Process YouTube Result",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Process YouTube Result",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Process YouTube Result": {
+        "main": [
+          [
+            {
+              "node": "Publish Instagram Reel",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Publish Instagram Reel": {
+        "main": [
+          [
+            {
+              "node": "Process Instagram Result",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Process Instagram Result",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Process Instagram Result": {
+        "main": [
+          [
+            {
+              "node": "Record Result & Collect",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Record Result & Collect": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Clips",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Clips": {
+        "main": [
+          [
+            {
+              "node": "Generate Final Summary",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Generate Metadata & Check Duplicates",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": []
+  },
+  "tags": [],
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "parentFolderId": null,
+  "description": "Complete YouTube to Shorts/Reels pipeline using media processor, Submagic API, YouTube, Instagram, and duplicate tracking.",
+  "scopes": [
+    "execution:reveal",
+    "workflow:create",
+    "workflow:delete",
+    "workflow:disableRedaction",
+    "workflow:enableRedaction",
+    "workflow:execute",
+    "workflow:execute-chat",
+    "workflow:export",
+    "workflow:import",
+    "workflow:list",
+    "workflow:move",
+    "workflow:publish",
+    "workflow:read",
+    "workflow:share",
+    "workflow:unpublish",
+    "workflow:unshare",
+    "workflow:update"
+  ],
+  "canExecute": true
+}
