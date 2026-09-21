@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+
+# Media & Temp Files
+temp_work/
+exported_clips/
+*.mp4
+*.mkv
+*.avi
+*.mov
+*.wav
+*.mp3
+
+# Environment & Secrets
+.env
+.env.local
+*.log
+
+# Editor & OS files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+Thumbs.db
